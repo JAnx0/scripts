@@ -1,10 +1,9 @@
 """
+Capture image from camera pointing to lava lamp 
+and return hash from image.
 
-	Capture image from camera pointing to lava lamp 
-	and return hash from image.
-	
-	Credits: Cloudflare Inc.
-
+Author:     Jannik Schmied, 2023
+Credits:    Cloudflare Inc.
 """
 import cv2
 import numpy as np

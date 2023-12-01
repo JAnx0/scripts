@@ -1,26 +1,24 @@
 """
-	Prime number calculation script.
-	Copyright Jannik Schmied, 2021
+Prime number calculation script.
+Copyright Jannik Schmied, 2021
 
-	This script uses the "Sieve of Eratothenes" technique to 
-	calculate prime numbers up to a certain range.
-	Additionally, there is the possibility to save the output
-	to a file instead of printing it to the screen.
+This script uses the "Sieve of Eratothenes" technique to 
+calculate prime numbers up to a certain range.
+Additionally, there is the possibility to save the output
+to a file instead of printing it to the screen.
 
-	Examples:
-	# Calculate all primes smaller then 1000000 and save them to file
-	python3 prime.py 1000000 True
-	python3 prime.py 1000000 true
-	python3 prime.py 1000000 1
+Examples:
+# Calculate all primes smaller then 1000000 and save them to file
+python3 prime.py 1000000 True
+python3 prime.py 1000000 true
+python3 prime.py 1000000 1
 
-	# Calculate all primes smaller then 5000 but don't save them to file
-	python3 prime.py 5000 False
-	python3 prime.py 5000 false
-	python3 prime.py 5000 0
-	python3 prime.py 5000
+# Calculate all primes smaller then 5000 but don't save them to file
+python3 prime.py 5000 False
+python3 prime.py 5000 false
+python3 prime.py 5000 0
+python3 prime.py 5000
 """
-
-
 from sys import argv
 from time import time
 from math import floor
