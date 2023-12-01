@@ -1,3 +1,9 @@
+black
+codespell
 filetype
+mypy
 numpy>=1.22.2
 opencv-python>=4.8.1.78
+pytest
+ruff
+safety
