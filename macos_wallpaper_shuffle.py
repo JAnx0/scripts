@@ -54,6 +54,7 @@ def main():
         raise ValueError("[!] No images found in specified directory!")
 
     wallpaper_counter: int = 0
+    img_name_buf: int = 0
 
     print("[*] Starting wallpaper shuffle. Press CTRL+C to stop.")
     notify("WallpaperShuffle", "Starting wallpaper shuffle. Press CTRL+C to stop.")
@@ -65,8 +66,10 @@ def main():
 
             # Set wallpaper
             app('Finder').desktop_picture.set(mactypes.File(os.path.join(args.path, image)))
+            print(f"[i] Current wallpaper: {image.ljust(img_name_buf)}", end="\r", flush=True)
 
             # Increment wallpaper counter and sleep for interval
+            img_name_buf = len(image)
             wallpaper_counter += 1
             time.sleep(args.interval)
 
