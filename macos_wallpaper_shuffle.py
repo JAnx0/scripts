@@ -7,6 +7,7 @@ Author: Jannik Schmied, 2023
 """
 import argparse
 import filetype
+import matplotlib.pyplot as plt
 import os
 import random
 import subprocess
@@ -14,6 +15,7 @@ import sys
 import time
 
 from appscript import app, mactypes
+from collections import defaultdict
 
 
 def notify(title: str, text: str, icon_path: str = "./assets/macos_beta.icns"):
@@ -31,6 +33,7 @@ def parse_args():
     parser.add_argument("--path", "-p", help="Path to folder containing images", type=str, required=True)
     parser.add_argument("--interval", "-i", help="Interval in seconds between wallpaper changes", type=int, required=True, default=60)
     parser.add_argument("--restore", "-r", help="Restore previous wallpaper on exit", action="store_true")
+    parser.add_argument("--analyze", "-a", help="Analyze image usage", action="store_true")
 
     return parser.parse_args()
 
@@ -48,13 +51,15 @@ def main():
         current_wallpaper = app('Finder').desktop_picture.get()
 
     images: list = [image for image in [file for file in os.listdir(args.path) if not os.path.isdir(os.path.join(args.path, file))] if filetype.is_image(os.path.join(args.path, image))]
+    total_wallpapers = len(images)
 
-    if len(images) == 0:
+    if total_wallpapers == 0:
         notify("WallpaperShuffle", "Error: No images found in specified directory!")
         raise ValueError("[!] No images found in specified directory!")
 
     wallpaper_counter: int = 0
     img_name_buf: int = 0
+    img_counts = defaultdict(int)
 
     print("[*] Starting wallpaper shuffle. Press CTRL+C to stop.")
     notify("WallpaperShuffle", "Starting wallpaper shuffle. Press CTRL+C to stop.")
@@ -71,6 +76,15 @@ def main():
             # Increment wallpaper counter and sleep for interval
             img_name_buf = len(image)
             wallpaper_counter += 1
+            img_counts[image] += 1
+
+            # Update images folder
+            images = [image for image in [file for file in os.listdir(args.path) if not os.path.isdir(os.path.join(args.path, file))] if filetype.is_image(os.path.join(args.path, image))]
+            if total_wallpapers != len(images):
+                print(f"[i] Updated images (Total: {total_wallpapers} -> {len(images)})")
+                notify("WallpaperShuffle", f"Updated images (Total: {total_wallpapers} -> {len(images)})")
+                total_wallpapers = len(images)
+
             time.sleep(args.interval)
 
         except KeyboardInterrupt:
@@ -85,6 +99,20 @@ def main():
         # Reset wallpaper
         print("[*] Restoring initial wallpaper")
         app('Finder').desktop_picture.set(current_wallpaper)
+
+    if args.analyze:
+        mean_usage = sum(img_counts.values()) / len(img_counts)
+        std_deviation = (sum((x - mean_usage) ** 2 for x in img_counts.values()) / len(img_counts)) ** 0.5
+
+        print(f"[i] Mean Usage: {mean_usage}")
+        print(f"[i] Standard Deviation: {std_deviation}")
+
+        plt.bar(img_counts.keys(), img_counts.values())
+        plt.xlabel('Images')
+        plt.ylabel('Usage Count')
+        plt.title('Histogram of Image Usage')
+        plt.xticks(rotation=90)
+        plt.show()
 
     print("[*] Done. Exiting.")
     sys.exit(0)
